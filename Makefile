@@ -7,7 +7,7 @@ BIN=bin
 
 OBJS=$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(wildcard $(SRC)/*.c))
 
-CXXFLAGS=-I$(INC)
+CXXFLAGS=-I$(INC) -g
 LDFLAGS=-lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
 .PHONY: all clean
@@ -28,6 +28,18 @@ $(OBJ)/hello.o: hello.cpp | $(OBJ)
 
 $(OBJ)/glad.o: $(SRC)/glad.c | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ)/Environment.o: $(SRC)/Environment.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ)/VertexBuffer.o: $(SRC)/VertexBuffer.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ)/IndexBuffer.o: $(SRC)/IndexBuffer.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(OBJ)/Shader.o: $(SRC)/Shader.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 $(OBJ):
 	mkdir -p $@
