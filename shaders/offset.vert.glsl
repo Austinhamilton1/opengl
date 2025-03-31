@@ -5,7 +5,9 @@ layout (location = 1) in vec3 aColor;
 
 out vec4 ourColor;
 
+uniform float offset;
+
 void main() {
-    gl_Position = vec4(aPos.xyz, 1.0f);
-    ourColor = vec4(0.5f, 0.0f, 0.0f, 1.0f);
+    gl_Position = vec4(aPos.x + offset, aPos.yz, 1.0f);
+    ourColor = vec4(aColor.xyz, 1.0f);
 }

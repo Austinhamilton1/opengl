@@ -32,13 +32,19 @@ $(OBJ)/glad.o: $(SRC)/glad.c | $(OBJ)
 $(OBJ)/Environment.o: $(SRC)/Environment.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(OBJ)/VertexBuffer.o: $(SRC)/VertexBuffer.cpp | $(OBJ)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(OBJ)/IndexBuffer.o: $(SRC)/IndexBuffer.cpp | $(OBJ)
+$(OBJ)/Scene.o: $(SRC)/Scene.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ)/Shader.o: $(SRC)/Shader.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(OBJ)/GraphicsObject.o: $(SRC)/GraphicsObject.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(OBJ)/Image.o: $(SRC)/Image.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(OBJ)/Texture.o: $(SRC)/Texture.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 $(OBJ):
