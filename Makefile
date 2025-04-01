@@ -7,7 +7,7 @@ BIN=bin
 
 OBJS=$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(wildcard $(SRC)/*.c))
 
-CXXFLAGS=-I$(INC) -g
+CXXFLAGS=-I$(INC) -g -rdynamic
 LDFLAGS=-lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
 .PHONY: all clean
@@ -35,10 +35,16 @@ $(OBJ)/Environment.o: $(SRC)/Environment.cpp | $(OBJ)
 $(OBJ)/Scene.o: $(SRC)/Scene.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
+$(OBJ)/Renderer.o: $(SRC)/Renderer.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
 $(OBJ)/Shader.o: $(SRC)/Shader.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 $(OBJ)/VertexBuffer.o: $(SRC)/VertexBuffer.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(OBJ)/IndexBuffer.o: $(SRC)/IndexBuffer.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 $(OBJ)/GraphicsObject.o: $(SRC)/GraphicsObject.cpp | $(OBJ)

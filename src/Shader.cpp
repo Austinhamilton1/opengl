@@ -5,11 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-//clean up
-gl::Shader::~Shader() {
-    glDeleteProgram(program);
-}
-
 //read the data from a file into a string
 static std::string readFile(std::string filename) {
     std::ifstream inputFile(filename); //open the file for reading

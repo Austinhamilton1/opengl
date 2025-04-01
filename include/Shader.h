@@ -17,7 +17,7 @@ namespace gl {
 
     public:
         Shader() {};
-        ~Shader();
+        ~Shader() {};
 
         int setVertexSource(std::string filename);
         int setFragmentSource(std::string filename);
@@ -28,6 +28,7 @@ namespace gl {
 
         template<typename T> void sendScalar(std::string uniformName, T scalar);
         template<typename T> void sendVector(std::string uniformName, int elementSize, int count, ...);
+        void sendMatrix(std::string uniformName, int x, int y, float *matrix);
     };
 
     //sends a float to the shader
@@ -151,5 +152,31 @@ namespace gl {
             glUniform3uiv(uniformLocation, elementCount, data.data());
         else if(elementSize == 4)
             glUniform4uiv(uniformLocation, elementCount, data.data());
+    }
+
+    //send a matrix of floats to the shader
+    inline void Shader::sendMatrix(std::string uniformName, int x, int y, float *matrix) {
+        //get the uniform location and set the active program to this program
+        int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        glUseProgram(program);
+
+        if(x == 2 && y == 2)
+            glUniformMatrix2fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 2 && y == 3)
+            glUniformMatrix2x3fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 2 && y == 4)
+            glUniformMatrix2x4fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 3 && y == 2)
+            glUniformMatrix3x2fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 3 && y == 3)
+            glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 3 && y == 4)
+            glUniformMatrix3x4fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 4 && y == 2)
+            glUniformMatrix4x2fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 4 && y == 3)
+            glUniformMatrix4x3fv(uniformLocation, 1, GL_FALSE, matrix);
+        if(x == 4 && y == 4)
+            glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, matrix);
     }
 }

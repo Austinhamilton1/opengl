@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Types.h"
 
 #include <string>
@@ -11,9 +13,11 @@ namespace gl {
 
     public:
         Texture(TextureWrapping wrapType, TextureFiltering filterType);
-        ~Texture() {};
+        ~Texture();
 
         void setBorderColor(float r, float g, float b, float a);
         void loadImage(std::string filename, ColorType openGLColorType, ColorType fileColorType);
+        void select();
+        void deselect();
     };
 }

@@ -36,8 +36,8 @@ gl::Environment::Environment(int width, int height) {
 gl::Environment::~Environment() {
     //explicitly delete all the scenes
     //so that when we delete objects, the context is still valid
-    for(const auto& scene : scenes) {
-        scene->clear();
+    for(auto renderer : renderers) {
+        renderer->clear();
     }
 
     glfwTerminate();
@@ -51,8 +51,8 @@ void gl::Environment::processInput() {
 }
 
 //add a scene to the environment
-void gl::Environment::addScene(std::shared_ptr<gl::Scene> scene) {
-    scenes.push_back(scene);
+void gl::Environment::addRenderer(std::shared_ptr<gl::Renderer> renderer) {
+    renderers.push_back(renderer);
 }
 
 //add a render callback to the environment
@@ -62,6 +62,11 @@ void gl::Environment::addCallback(std::function<void(Environment *)> callback) {
 
 //render loop
 void gl::Environment::render() {
+    //allocate anything in the renderers
+    for(auto renderer : renderers) {
+        renderer->allocate();
+    }
+
     while(!glfwWindowShouldClose(window)) {
         //input
         processInput();
@@ -75,8 +80,8 @@ void gl::Environment::render() {
             callback(this);
 
         //render all scenes in the environment
-        for(auto& scene : scenes)
-            scene->render();
+        for(auto& renderer : renderers)
+            renderer->renderScene();
 
         //swap the buffers and check for events
         glfwSwapBuffers(window);

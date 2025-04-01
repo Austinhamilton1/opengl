@@ -7,23 +7,25 @@
 #include <memory>
 #include <functional>
 
-#include "Scene.h"
+#include "Renderer.h"
 
 namespace gl {
     class Environment {
     private:
         GLFWwindow *window;
-        std::vector<std::shared_ptr<Scene>> scenes;
+        std::vector<std::shared_ptr<Renderer>> renderers;
         std::vector<std::function<void(Environment *)>> renderCallbacks;
 
     public:
         Environment(int width, int height);
         ~Environment();
         
-        inline std::vector<std::shared_ptr<Scene>> getScenes() { return scenes; };
+        inline std::vector<std::shared_ptr<Renderer>> getRenderers() { return renderers; };
+        inline GLFWwindow *getWindow() { return window; };
 
         void processInput();
-        void addScene(std::shared_ptr<Scene> scene);
+        void addRenderer(std::shared_ptr<Renderer> renderer);
+
         void addCallback(std::function<void(Environment *)>);
         void setup();
         void render();

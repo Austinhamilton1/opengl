@@ -3,15 +3,14 @@
 //create the buffer
 gl::VertexBuffer::VertexBuffer(gl::BufferDrawType drawType) {
     glGenBuffers(1, &id);
-    glGenVertexArrays(1, &VAO);
     this->drawType = drawType;
     elementSize = 0;
+    //indexes = nullptr;
 }
 
 //delete the buffer
 gl::VertexBuffer::~VertexBuffer() {
     glDeleteBuffers(1, &id);
-    glDeleteVertexArrays(1, &VAO);
 }
 
 //add data to the buffer
@@ -27,33 +26,64 @@ void gl::VertexBuffer::addData(int elementSize, int count, ...) {
 }
 
 //send buffer data to the GPU
-void gl::VertexBuffer::sendData() {
-    //bind the vertex array object
-    glBindVertexArray(VAO);
-
+void gl::VertexBuffer::staticAllocate() {
     //bind the buffer element
-    glBindBuffer(GL_ARRAY_BUFFER, id);
-
+    select();
+    
     //send the data to the GPU
     GLenum usage = getGLType<BufferDrawType>(drawType);
     glBufferData(GL_ARRAY_BUFFER, sizeof(float) * data.size(), data.data(), usage);
+
+    //allocate the index buffer if it exists
+    if(indexes != nullptr) {
+        indexes->staticAllocate();
+    }
+    
+    //unbind the buffer
+    deselect();
 }
 
 //set the layout of a vertex attribute
-void gl::VertexBuffer::setLayout(int location, int size, size_t stride, size_t offset) {
-    glBindVertexArray(VAO);
-    glVertexAttribPointer(location, size, getGLType<float>(), GL_FALSE, stride, (void *)offset);
-    glEnableVertexAttribArray(location);
+void gl::VertexBuffer::setLayout(unsigned int location, unsigned int size, size_t stride, size_t offset) {
+    //set the attribute
+    VertexAttribute attrib;
+    attrib.index = location;
+    attrib.elementSize = size;
+    attrib.type = getGLType<float>();
+    attrib.isNormalized = GL_FALSE;
+    attrib.stride = stride;
+    attrib.offset = offset;
+
+    //add the attribute
+    attributes.push_back(attrib);
 }
 
-//draw the buffer to the screen
-void gl::VertexBuffer::render() {
-    //bind the vertex array object
-    glBindVertexArray(VAO);
+//select the buffer for usage
+void gl::VertexBuffer::select() {
+    glBindBuffer(GL_ARRAY_BUFFER, id);
+}
 
-    //calculate how many elements to draw
-    int elementCount = data.size() / elementSize;
+//deselect the buffer 
+void gl::VertexBuffer::deselect() {
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
-    //draw the data in the buffer
-    glDrawArrays(GL_TRIANGLES, 0, elementCount);
+//enable the vertex buffer attributes
+void gl::VertexBuffer::enableAttributes() {
+    for(auto& attrib : attributes) {
+        glVertexAttribPointer(attrib.index, attrib.elementSize, attrib.type, attrib.isNormalized, attrib.stride, (void *)attrib.offset);
+        glEnableVertexAttribArray(attrib.index);
+    }
+}
+
+//set a texture unit
+void gl::VertexBuffer::setTexture(int key, std::shared_ptr<gl::Texture> texture) {
+    textures[key] = texture;
+}
+
+//get a texture unit
+std::shared_ptr<gl::Texture> gl::VertexBuffer::getTexture(int key) {
+    if(textures.find(key) == textures.end())
+        return nullptr;
+    return textures[key];
 }

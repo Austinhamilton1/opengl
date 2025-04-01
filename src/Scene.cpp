@@ -21,14 +21,3 @@ void gl::Scene::addCallback(std::function<void(Scene *)> callback) {
 void gl::Scene::clear() {
     objects.clear();
 }
-
-//render all the objects in the scene to the screen
-void gl::Scene::render() {
-    //call any render callbacks
-    for(auto& callback : renderCallbacks)
-        callback(this);
-
-    //render all the objects in the scene
-    for(const auto& pair : objects)
-        pair.second->render();
-}

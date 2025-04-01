@@ -18,10 +18,10 @@ namespace gl {
         Scene() {};
         ~Scene() {};
 
+        std::unordered_map<std::string, std::shared_ptr<GraphicsObject>> getObjects() { return objects; };
         std::shared_ptr<GraphicsObject> get(std::string key);
         void set(std::string key, std::shared_ptr<GraphicsObject> object);
         void addCallback(std::function<void(Scene *)> callback);
         void clear();
-        void render();
     };
 }
