@@ -5,7 +5,7 @@
 
 #include "Types.h"
 #include "Scene.h"
-#include "Buffer.h"
+#include "VertexBuffer.h"
 #include "Shader.h"
 #include "GraphicsObject.h"
 #include "Environment.h"
@@ -25,19 +25,16 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<gl::Scene> rectangleScene = std::make_shared<gl::Scene>();
     
     //generate the vertices
-    std::shared_ptr<gl::Buffer<float>> vertices = std::make_shared<gl::Buffer<float>>(gl::VERTEX, gl::STATIC);
+    std::shared_ptr<gl::VertexBuffer> vertices = std::make_shared<gl::VertexBuffer>(gl::STATIC);
     vertices->addData(6, 6, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f); //top right
     vertices->addData(6, 6, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f); //bottom right
     vertices->addData(6, 6, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f); //bottom left
-    vertices->addData(6, 6, -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f); //top left
+    vertices->addData(6, 6, 0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f); //top right
+    vertices->addData(6, 6, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f); //bottom left
+    vertices->addData(6, 6, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f); //top left
     vertices->sendData();
     vertices->setLayout(0, 3, 6 * sizeof(float), 0);
     vertices->setLayout(1, 3, 6 * sizeof(float), 3 * sizeof(float));
-
-    std::shared_ptr<gl::Buffer<unsigned int>> indexes = std::make_shared<gl::Buffer<unsigned int>>(vertices->getVAO(), gl::INDEX, gl::STATIC);
-    indexes->addData(1, 3, 0, 1, 2);
-    indexes->addData(1, 3, 0, 2, 3);
-    indexes->sendData();
 
     //create the shader
     std::shared_ptr<gl::Shader> shader = std::make_shared<gl::Shader>();
@@ -48,7 +45,6 @@ int main(int argc, char *argv[]) {
     //create the triangle object and add it to the scene
     std::shared_ptr<gl::GraphicsObject> rectangle = std::make_shared<gl::GraphicsObject>();
     rectangle->setVertexBuffer(vertices);
-    rectangle->setIndexBuffer(indexes);
     rectangle->setShader(shader);
     rectangleScene->set("rectangle", rectangle);
 

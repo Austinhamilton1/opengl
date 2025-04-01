@@ -1,35 +1,33 @@
 #pragma once
 
 #include "Types.h"
-#include "Buffer.h"
+#include "VertexBuffer.h"
 #include "Shader.h"
 
 #include <memory>
 #include <vector>
+#include <functional>
 
 namespace gl {
     class GraphicsObject {
     private:
-        std::shared_ptr<Buffer<float>> vertexBuffer;
-        std::shared_ptr<Buffer<unsigned int>> indexBuffer;
+        std::shared_ptr<VertexBuffer> vertexBuffer;
         std::shared_ptr<Shader> shader;
-        std::vector<void (*)(GraphicsObject *)> renderCallbacks;
+        std::vector<std::function<void(GraphicsObject *)>> renderCallbacks;
 
     public:
-        GraphicsObject() : vertexBuffer(nullptr), indexBuffer(nullptr), shader(nullptr) {};
+        GraphicsObject() : vertexBuffer(nullptr), shader(nullptr) {};
         ~GraphicsObject() {};
 
         //mutators
-        void setVertexBuffer(std::shared_ptr<Buffer<float>> vertexBuffer) { this->vertexBuffer = vertexBuffer; };
-        void setIndexBuffer(std::shared_ptr<Buffer<unsigned int>> indexBuffer) { this->indexBuffer = indexBuffer; };
+        void setVertexBuffer(std::shared_ptr<VertexBuffer> vertexBuffer) { this->vertexBuffer = vertexBuffer; };
         void setShader(std::shared_ptr<Shader> shader) { this->shader = shader; };
         
         //accessors
-        std::shared_ptr<Buffer<float>> getVertexBuffer() { return vertexBuffer; };
-        std::shared_ptr<Buffer<unsigned int>> getIndexBuffer() { return indexBuffer; };
+        std::shared_ptr<VertexBuffer> getVertexBuffer() { return vertexBuffer; };
         std::shared_ptr<Shader> getShader() { return shader; };
 
-        void addCallback(void (*callback)(GraphicsObject *));
+        void addCallback(std::function<void(GraphicsObject *)> callback);
 
         void render();
     };

@@ -6,12 +6,13 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <functional>
 
 namespace gl {
     class Scene {
     private:
         std::unordered_map<std::string, std::shared_ptr<GraphicsObject>> objects;
-        std::vector<void (*)(Scene *)> renderCallbacks;
+        std::vector<std::function<void(Scene *)>> renderCallbacks;
 
     public:
         Scene() {};
@@ -19,7 +20,8 @@ namespace gl {
 
         std::shared_ptr<GraphicsObject> get(std::string key);
         void set(std::string key, std::shared_ptr<GraphicsObject> object);
-        void addCallback(void (*callback)(Scene *));
+        void addCallback(std::function<void(Scene *)> callback);
+        void clear();
         void render();
     };
 }

@@ -13,8 +13,13 @@ void gl::Scene::set(std::string key, std::shared_ptr<gl::GraphicsObject> object)
 }
 
 //add a render callback to the scene
-void gl::Scene::addCallback(void (*callback)(Scene *)) {
+void gl::Scene::addCallback(std::function<void(Scene *)> callback) {
     renderCallbacks.push_back(callback);
+}
+
+//clear the objects from the scene
+void gl::Scene::clear() {
+    objects.clear();
 }
 
 //render all the objects in the scene to the screen

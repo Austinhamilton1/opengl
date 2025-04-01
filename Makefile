@@ -38,6 +38,9 @@ $(OBJ)/Scene.o: $(SRC)/Scene.cpp | $(OBJ)
 $(OBJ)/Shader.o: $(SRC)/Shader.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
+$(OBJ)/VertexBuffer.o: $(SRC)/VertexBuffer.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
 $(OBJ)/GraphicsObject.o: $(SRC)/GraphicsObject.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 

@@ -1,7 +1,4 @@
 #include "Environment.h"
-#include "Shader.h"
-#include "Buffer.h"
-#include "GraphicsObject.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -40,7 +37,7 @@ gl::Environment::~Environment() {
     //explicitly delete all the scenes
     //so that when we delete objects, the context is still valid
     for(const auto& scene : scenes) {
-        scene->~Scene();
+        scene->clear();
     }
 
     glfwTerminate();
@@ -59,7 +56,7 @@ void gl::Environment::addScene(std::shared_ptr<gl::Scene> scene) {
 }
 
 //add a render callback to the environment
-void gl::Environment::addCallback(void (*callback)(Environment *)) {
+void gl::Environment::addCallback(std::function<void(Environment *)> callback) {
     renderCallbacks.push_back(callback);
 }
 

@@ -10,14 +10,12 @@ void gl::GraphicsObject::render() {
     if(shader != nullptr)
         shader->use();
 
-    //use the index buffer if it is defined, otherwise use the vertex buffer
-    if(indexBuffer != nullptr)
-        indexBuffer->render();
-    else if(vertexBuffer != nullptr)
+    //use the vertex buffer if it is defined
+    if(vertexBuffer != nullptr)
         vertexBuffer->render();
 }
 
 //add a render callback to the object
-void gl::GraphicsObject::addCallback(void (*callback)(GraphicsObject *)) {
+void gl::GraphicsObject::addCallback(std::function<void(GraphicsObject *)> callback) {
     renderCallbacks.push_back(callback);
 }

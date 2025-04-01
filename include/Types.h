@@ -3,12 +3,6 @@
 #include <glad/glad.h>
 
 namespace gl {
-    //intializing buffer types
-    enum BufferType {
-        VERTEX,
-        INDEX,
-    };
-
     //initializing buffer draw method
     enum BufferDrawType {
         STATIC,
@@ -55,14 +49,7 @@ namespace gl {
 
     //convert type enums to gl type
     template<typename T> GLenum getGLType(unsigned int);
-    template<> inline GLenum getGLType<BufferType>(unsigned int type) {
-        if(type == VERTEX)
-            return GL_ARRAY_BUFFER;
-        if(type == INDEX)
-            return GL_ELEMENT_ARRAY_BUFFER;
-        return 0;
-    }
-
+    
     //convert BufferDrawType to GLenum
     template<> inline GLenum getGLType<BufferDrawType>(unsigned int type) {
         if(type == STATIC)
