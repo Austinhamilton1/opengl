@@ -7,7 +7,7 @@ BIN=bin
 
 OBJS=$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(wildcard $(SRC)/*.c))
 
-CXXFLAGS=-I$(INC) -g -rdynamic
+CXXFLAGS=-I$(INC) -g
 LDFLAGS=-lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
 .PHONY: all clean
@@ -54,6 +54,12 @@ $(OBJ)/Image.o: $(SRC)/Image.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 $(OBJ)/Texture.o: $(SRC)/Texture.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(OBJ)/Camera.o: $(SRC)/Camera.cpp | $(OBJ)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< 
+
+$(OBJ)/Generate.o: $(SRC)/Generate.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $< 
 
 $(OBJ):

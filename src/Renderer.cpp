@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 //initialize the renderer
@@ -28,7 +29,9 @@ void gl::Renderer::allocate() {
 void gl::Renderer::renderObject(std::shared_ptr<GraphicsObject> object) {
     //send the object reference frame to the shader
     glm::mat4 referenceFrame = object->getReferenceFrame();
-    shader->sendMatrix("world", 4, 4, glm::value_ptr(referenceFrame));
+    shader->sendMatrix("model", 4, 4, glm::value_ptr(referenceFrame));
+    shader->sendMatrix("view", 4, 4, glm::value_ptr(view));
+    shader->sendMatrix("projection", 4, 4, glm::value_ptr(projection));
 
     //select the object's buffer
     auto buffer = object->getVertexBuffer();
@@ -63,7 +66,7 @@ void gl::Renderer::renderObject(std::shared_ptr<GraphicsObject> object) {
 }
 
 //render the scene
-void gl::Renderer::renderScene() {
+void gl::Renderer::renderScene(std::shared_ptr<Camera> camera) {
     //use the shader program and attribute array
     shader->use();
     glBindVertexArray(VAO);

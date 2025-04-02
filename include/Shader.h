@@ -34,6 +34,11 @@ namespace gl {
     //sends a float to the shader
     template<> inline void Shader::sendScalar<float>(std::string uniformName, float scalar) {
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        
+        //make sure the uniform exists
+        if(uniformLocation == -1)
+            return;
+        
         glUseProgram(program);
         glUniform1f(uniformLocation, scalar);
     }
@@ -41,6 +46,11 @@ namespace gl {
     //sends an int to the shader
     template<> inline void Shader::sendScalar<int>(std::string uniformName, int scalar) {
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        
+        //make sure the uniform exists
+        if(uniformLocation == -1)
+            return;
+        
         glUseProgram(program);
         glUniform1i(uniformLocation, scalar);
     }
@@ -48,6 +58,11 @@ namespace gl {
     //sends an unsigned int to the shader
     template<> inline void Shader::sendScalar<unsigned int>(std::string uniformName, unsigned int scalar) {
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        
+        //make sure the uniform exists
+        if(uniformLocation == -1)
+            return;
+        
         glUseProgram(program);
         glUniform1ui(uniformLocation, scalar);
     }
@@ -72,6 +87,8 @@ namespace gl {
 
         //get the uniform location and set the active program to this program
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        if(uniformLocation == -1)
+            return;
         glUseProgram(program);
 
         //send the data to the shader
@@ -106,6 +123,8 @@ namespace gl {
 
         //get the uniform location and set the active program to this program
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        if(uniformLocation == -1)
+            return;
         glUseProgram(program);
 
         //send the data to the shader
@@ -140,6 +159,8 @@ namespace gl {
 
         //get the uniform location and set the active program to this program
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        if(uniformLocation == -1)
+            return;
         glUseProgram(program);
 
         //send the data to the shader
@@ -158,6 +179,8 @@ namespace gl {
     inline void Shader::sendMatrix(std::string uniformName, int x, int y, float *matrix) {
         //get the uniform location and set the active program to this program
         int uniformLocation = glGetUniformLocation(program, uniformName.c_str());
+        if(uniformLocation == -1)
+            return;
         glUseProgram(program);
 
         if(x == 2 && y == 2)

@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 #include <math.h>
-#include <iostream>
+#include <random>
 
 #include "Types.h"
 #include "Scene.h"
@@ -15,76 +15,73 @@
 #include "Environment.h"
 #include "Texture.h"
 #include "Renderer.h"
+#include "Generate.h"
+
+float elapsedTime;
+
+float randomFloat(float min, float max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(min, max);
+
+    return dis(gen);
+}
 
 int main(int argc, char *argv[]) {
     //create the environment
     gl::Environment env(800, 600);
 
     //scene with a single triangle
-    std::shared_ptr<gl::Scene> rectangleScene = std::make_shared<gl::Scene>();
+    auto scene = std::make_shared<gl::Scene>();
+    auto camera = std::make_shared<gl::Camera>();
+    camera->setSpeed(10.0f);
+    camera->setTorque(2.0f);
+    env.setCamera(camera);
     
     //create the textures
-    std::shared_ptr<gl::Texture> crateTexture = std::make_shared<gl::Texture>(gl::REPEAT, gl::LINEAR);
+    auto crateTexture = std::make_shared<gl::Texture>(gl::REPEAT, gl::LINEAR);
     crateTexture->loadImage("textures/container.jpg", gl::RGB, gl::RGB);
-    std::shared_ptr<gl::Texture> faceTexture = std::make_shared<gl::Texture>(gl::REPEAT, gl::LINEAR);
+    auto faceTexture = std::make_shared<gl::Texture>(gl::REPEAT, gl::LINEAR);
     faceTexture->loadImage("textures/awesomeface.png", gl::RGB, gl::RGBA);
 
     //generate the vertices
-    std::shared_ptr<gl::VertexBuffer> vertices = std::make_shared<gl::VertexBuffer>(gl::STATIC);
-    vertices->addData(8, 8, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f); //top right
-    vertices->addData(8, 8, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f); //bottom right
-    vertices->addData(8, 8, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f); //bottom left
-    //vertices->addData(8, 8, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f); //top right
-    //vertices->addData(8, 8, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f); //bottom left
-    vertices->addData(8, 8, -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f); //top left
-    vertices->setLayout(0, 3, 8 * sizeof(float), 0);
-    vertices->setLayout(1, 3, 8 * sizeof(float), 3 * sizeof(float));
-    vertices->setLayout(2, 2, 8 * sizeof(float), 6 * sizeof(float));
+    auto vertices = gl::Generate::cube(10, 10, 10, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f));
     vertices->setTexture(0, crateTexture);
     vertices->setTexture(1, faceTexture);
 
-    std::shared_ptr<gl::IndexBuffer> indexes = std::make_shared<gl::IndexBuffer>(gl::STATIC);
-    indexes->addData(3, 0, 1, 2);
-    indexes->addData(3, 0, 2, 3);
-    vertices->setIndexBuffer(indexes);
-
     //create the shader
-    std::shared_ptr<gl::Shader> shader = std::make_shared<gl::Shader>();
-    shader->setVertexSource("shaders/transform.vert.glsl");
+    auto shader = std::make_shared<gl::Shader>();
+    shader->setVertexSource("shaders/3d.vert.glsl");
     shader->setFragmentSource("shaders/texture.frag.glsl");
     shader->compile();
     shader->sendScalar<int>("texture1", 0);
     shader->sendScalar<int>("texture2", 1);
 
-    //create the spinner object and add it to the scene
-    std::shared_ptr<gl::GraphicsObject> spinner = std::make_shared<gl::GraphicsObject>();
-    spinner->setVertexBuffer(vertices);
-    rectangleScene->set("spinner", spinner);
+    //create 10 spinning cubes
+    std::vector<std::shared_ptr<gl::GraphicsObject>> spinners;
+    for(int i = 0; i < 10; i++) {
+        auto spinner = std::make_shared<gl::GraphicsObject>();
+        spinner->setVertexBuffer(vertices);
 
-    //create the scaler object and add it to the scene
-    std::shared_ptr<gl::GraphicsObject> scaler = std::make_shared<gl::GraphicsObject>();
-    scaler->setVertexBuffer(vertices);
-    rectangleScene->set("scaler", scaler);
+        //set the spinner in a random location
+        spinner->setPosition(glm::vec3(randomFloat(-20.0f, 20.0f), randomFloat(-20.0f, 20.f), randomFloat(-20.0f, 0.0f)));
 
-    //spin the spinner
-    spinner->addCallback([](gl::GraphicsObject *obj) {
-        glm::mat4 transformation(1.0f);
-        transformation = glm::translate(transformation, glm::vec3(0.5f, -0.5f, 0.0f));
-        transformation = glm::rotate(transformation, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-        obj->transform(transformation);
+        //add the object to the scene
+        std::string key = "spinner_" + i;
+        scene->set(key, spinner);
+
+        //add a callback to the object to make it spin
+        spinner->addCallback([](gl::GraphicsObject *obj) {
+            obj->rotate(elapsedTime * glm::radians(50.0f), glm::vec3(0.5, 1.0f, 0.0f));
+        });
+    }
+
+    auto renderer = std::make_shared<gl::Renderer>(shader);
+    renderer->setScene(scene);
+
+    env.addCallback([](gl::Environment *env) {
+        elapsedTime = env->getClock().elapsedTime;
     });
-
-    //scale the scaler
-    scaler->addCallback([](gl::GraphicsObject *obj) {
-        float scaleFactor = abs(sin((float)glfwGetTime()));
-        glm::mat4 transformation(1.0f);
-        transformation = glm::translate(transformation, glm::vec3(-0.5f, 0.5f, 0.0f));
-        transformation = glm::scale(transformation, glm::vec3(scaleFactor, scaleFactor, 0.0f));
-        obj->transform(transformation);
-    });
-
-    std::shared_ptr<gl::Renderer> renderer = std::make_shared<gl::Renderer>(shader);
-    renderer->setScene(rectangleScene);
     
     //render the window
     env.addRenderer(renderer);

@@ -39,8 +39,11 @@ namespace gl {
         //transformations
         void transform(glm::mat4 transformation);
         void translate(glm::vec3 translation);
+        void translateGlobal(glm::vec3 translation);
         void rotate(float radians, glm::vec3 axis);
+        void rotateGlobal(float radians, glm::vec3 axis);
         void scale(glm::vec3 scaleFactor);
+        void scaleGlobal(glm::vec3 scaleFactor);
 
         glm::vec3 getPosition();
         void setPosition(glm::vec3 position);

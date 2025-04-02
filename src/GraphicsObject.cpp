@@ -25,22 +25,36 @@ void gl::GraphicsObject::transform(glm::mat4 transformation) {
     referenceFrame = transformation;
 }
 
-//translate the object by a vector
+//translate the object by a local vector
 void gl::GraphicsObject::translate(glm::vec3 translation) {
+    referenceFrame = glm::translate(referenceFrame, translation);
+}
+
+//translate the object by a global vector
+void gl::GraphicsObject::translateGlobal(glm::vec3 translation) {
     glm::mat4 mat(1.0f);
     mat = glm::translate(mat, translation);
     referenceFrame = mat * referenceFrame;
 }
-
-//rotate the object by radians around a vector
+//rotate the object by randians around a local vector
 void gl::GraphicsObject::rotate(float radians, glm::vec3 axis) {
+    referenceFrame = glm::rotate(referenceFrame, radians, axis);
+}
+
+//rotate the object by radians around a global vector
+void gl::GraphicsObject::rotateGlobal(float radians, glm::vec3 axis) {
     glm::mat4 mat(1.0f);
     mat = glm::rotate(mat, radians, axis);
     referenceFrame = mat * referenceFrame;
 }
 
-//scale the object by a scale factor
+//scale the object by a local scale factor
 void gl::GraphicsObject::scale(glm::vec3 scaleFactor) {
+    referenceFrame = glm::scale(referenceFrame, scaleFactor);
+}
+
+//scale the object by a global scale factor
+void gl::GraphicsObject::scaleGlobal(glm::vec3 scaleFactor) {
     glm::mat4 mat(1.0f);
     mat = glm::scale(mat, scaleFactor);
     referenceFrame = mat * referenceFrame;
