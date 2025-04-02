@@ -4,21 +4,27 @@ SRC=src
 INC=include
 OBJ=obj
 BIN=bin
+LIB=lib
 
 OBJS=$(patsubst $(SRC)/%.cpp, $(OBJ)/%.o, $(wildcard $(SRC)/*.cpp)) $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(wildcard $(SRC)/*.c))
 
 CXXFLAGS=-I$(INC) -g
 LDFLAGS=-lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 
-.PHONY: all clean
+.PHONY: all clean library
 
 all: $(BIN)/libtest $(BIN)/hello
+
+library: $(LIB)/libopengl.a
 
 $(BIN)/libtest: $(OBJ)/libtest.o $(OBJS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)/libtest.o $(OBJS) $(LDFLAGS)
 
 $(BIN)/hello: $(OBJ)/hello.o $(OBJS) | $(BIN)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJ)/hello.o $(OBJS) $(LDFLAGS)
+
+$(LIB)/libopengl.a: $(OBJS) | $(LIB)
+	ar rcs $@ $(OBJS)
 
 $(OBJ)/libtest.o: libtest.cpp | $(OBJ)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -68,6 +74,10 @@ $(OBJ):
 $(BIN):
 	mkdir -p $@
 
+$(LIB):
+	mkdir -p $@
+
 clean:
 	rm -rf $(OBJ)
 	rm -rf $(BIN)
+	rm -rf $(LIB)
